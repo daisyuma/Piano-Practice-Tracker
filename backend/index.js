@@ -34,8 +34,20 @@ app.post('/songs', async (request, response) => {
         return response.status(201).send(song)
 
     } catch (err) {
-        cconsole.log(err.message)
-        response.status(500).send({ message: err.message})
+        cconsole.log(err.message);
+        response.status(500).send({ message: err.message });
+    }
+});
+
+// Get all books from the database
+app.get('/songs', async (request, response) => {
+    try {
+        console.log("line 45");
+        const songs = await Song.find({});
+        return response.status(200).json(songs);
+    } catch (err) {
+        console.log(err.message);
+        response.send(500).send({ message: err.message})
     }
 });
 

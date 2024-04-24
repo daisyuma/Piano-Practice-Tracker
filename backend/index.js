@@ -39,15 +39,54 @@ app.post('/songs', async (request, response) => {
     }
 });
 
-// Get all books from the database
+// Get all songs from the database
 app.get('/songs', async (request, response) => {
     try {
-        console.log("line 45");
         const songs = await Song.find({});
-        return response.status(200).json(songs);
+        return response.status(200).json({
+            count: songs.length,
+            data: songs 
+        });
     } catch (err) {
         console.log(err.message);
-        response.send(500).send({ message: err.message})
+        response.status(500).send({ message: err.message})
+    }
+});
+
+// Get all songs from the database by id
+app.get('/songs/:id', async (request, response) => {
+    try {
+        const { id } = request.params;
+        const song = await Song.findById(id);
+        return response.status(200).json(song);
+    } catch (err) {
+        console.log(err.message);
+        response.status(500).send({ message: err.message});
+    }
+});
+
+// Update a song
+app.put('/songs/:id', async (request, response) => {
+    try {
+        
+        if (
+            !request.body.title ||
+            !request.body.composer
+        ){
+            return response.status(400).send({
+                message: 'Send all required fields: title, composer'
+            })
+        }
+        const { id } = request.params;
+        const song = await Song.findByIdAndUpdate(id, request.body);
+        if (!song) {
+            return response.status(404).json({ message: `Song ${id} not found`});
+        }
+        return response.status(200).send({ message: `Song ${id} updated!`});
+    } catch(err) {
+        console.log("line 87");
+        console.log(err.message);
+        response.status(500).send({ message: err.message});
     }
 });
 

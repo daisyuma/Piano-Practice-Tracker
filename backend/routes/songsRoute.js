@@ -1,7 +1,6 @@
 import express from 'express';
 import { Song } from '../models/songModel.js'
 
-
 const router = express.Router();
 
 // Create a new practice song
@@ -9,22 +8,23 @@ router.post('/', async (request, response) => {
     try {
         if (
             !request.body.title ||
-            !request.body.composer
+            !request.body.artist ||
+            !request.body.startDate
         ){
             return response.status(400).send({
-                message: 'Send all required fields: title, composer'
+                message: 'Send all required fields: title, artist, start date'
             })
         }
         const newSong = {
             title: request.body.title,
-            composer: request.body.composer,
-            year: request.body.year,
+            artist: request.body.artist,
+            startDate: request.body.startDate,
         }
         const song = await Song.create(newSong)
         return response.status(201).send(song)
 
     } catch (err) {
-        cconsole.log(err.message);
+        console.log(err.message);
         response.status(500).send({ message: err.message });
     }
 });
@@ -43,7 +43,7 @@ router.get('/', async (request, response) => {
     }
 });
 
-// Get all songs from the database by id
+// Get song from the database by id
 router.get('/:id', async (request, response) => {
     try {
         const { id } = request.params;
@@ -61,10 +61,11 @@ router.put('/:id', async (request, response) => {
         
         if (
             !request.body.title ||
-            !request.body.composer
+            !request.body.artist ||
+            !request.body.startDate
         ){
             return response.status(400).send({
-                message: 'Send all required fields: title, composer'
+                message: 'Send all required fields: title, artist, startDate'
             })
         }
         const { id } = request.params;
